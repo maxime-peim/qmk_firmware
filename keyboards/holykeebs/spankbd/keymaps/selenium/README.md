@@ -65,6 +65,22 @@ The export uses VIA-compatible basic names and compound actions such as `MT`,
 definition, VIA will display labels for the custom actions. It cannot change
 the compiled per-key timing rules.
 
+### Update only the VIA display/labels (no reflash)
+
+The definition preserves the official Span VIA geometry, including the angled
+thumb keys. To replace an earlier definition with incorrect thumb geometry,
+run this from the QMK checkout after pulling the updated branch:
+
+```sh
+python3 keyboards/holykeebs/spankbd/keymaps/selenium/export_layout.py --definition-only --output ./span-selenium-files
+```
+
+Load the resulting `span-selenium-files/span-selenium.definition.json` in VIA's
+**Design** tab, replacing the old definition. **Do not load the saved layout
+again**: only the display/labels need updating. No rebuild, ELF, `pyelftools`,
+reflash, or EEPROM reset is needed. This command does not touch
+`span-selenium.layout.json` or the keyboard's current assignments.
+
 ## Base layer
 
 ```text
@@ -236,6 +252,14 @@ French AZERTY, timing callbacks, sticky modifiers, Caps Word, literal dead-key
 sequences, settings-layer access in both thumb orders, and Holykeebs keycode
 passthrough. Hardware operation still needs testing after flashing.
 
+The exporter tests also check definition-only updates without changing saved
+assignments. To test the converted geometry with VIA's official reader, install
+`@the-via/reader@1.14.4` outside the checkout and run:
+
+```sh
+NODE_PATH=/path/to/node_modules node keyboards/holykeebs/spankbd/keymaps/selenium/tests/test_via_definition.cjs
+```
+
 ## Provenance and intentional differences
 
 Adapted from [Selenium QMK](https://github.com/OneDeadKey/qmk-config-aekeynox),
@@ -253,6 +277,11 @@ Span-specific adaptations:
   `process_record_keymap` hook, preserving pointer/OLED processing.
 - Custom codes continue after Holykeebs' 18 codes; the VIA definition labels all
   23 entries in the same order.
+- `via-physical-layout.json` preserves the `layouts` object from the official
+  [Span VIA definition](https://github.com/the-via/keyboards/blob/ee58376a48e183cae9666c58973009bc65ca75e2/v3/idank/span.json),
+  revision `ee58376a48e183cae9666c58973009bc65ca75e2`. QMK's simplified
+  `keyboard.json` does not include the thumb rotations and is not used for
+  display geometry. Matrix coordinates and assignments are unchanged.
 - Literal French dead-key completion and a French-aware Caps Word handler.
 - Fn+Space remains Space instead of using the upstream reboot assignment.
 - Navigation E/R use simple Linux Alt+arrows, not the upstream window-cycle

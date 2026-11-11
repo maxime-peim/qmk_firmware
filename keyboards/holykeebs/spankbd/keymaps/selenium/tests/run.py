@@ -9,12 +9,16 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 
 
 KEYMAP = Path(__file__).resolve().parents[1]
 ROOT = KEYMAP.parents[4]
 OVERLAY = Path(os.environ.get("QMK_USERSPACE", ROOT / "qmk-userspace"))
+subprocess.run(
+    [sys.executable, str(KEYMAP / "tests/test_export_layout.py")], check=True
+)
 board = json.loads((KEYMAP.parents[1] / "keyboard.json").read_text())
 physical = board["layouts"]["LAYOUT_split_3x5_3"]["layout"]
 parameters = [f"k{i}" for i in range(36)]

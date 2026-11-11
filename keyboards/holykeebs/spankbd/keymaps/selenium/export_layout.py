@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Export the actual compiled matrix, not a second hand-maintained keymap.
+"""Export the compiled matrix and/or the Span's VIA keyboard definition.
 
-Requires pyelftools (already installed with this checkout's QMK environment).
+Matrix export requires pyelftools; --definition-only needs only Python itself.
 Does not open USB/HID devices or flash anything.
 """
 
@@ -9,9 +9,6 @@ import argparse
 import json
 from pathlib import Path
 import struct
-
-from elftools.elf.elffile import ELFFile
-
 
 CUSTOM_KEYS = [
     ("HK_SAVE", "Save Holykeebs settings", "HK\nSave"),
@@ -149,6 +146,8 @@ def via_keycode(value):
 
 
 def read_matrix(elf_path):
+    from elftools.elf.elffile import ELFFile
+
     with elf_path.open("rb") as stream:
         elf = ELFFile(stream)
         symbols = elf.get_section_by_name(".symtab").get_symbol_by_name("keymaps")
@@ -165,18 +164,18 @@ def read_matrix(elf_path):
 
 
 def keyboard_definition(board):
-    # Each KLE row contains one key with an explicit relative y and absolute x.
-    # This preserves the Span's stagger and unusual thumb widths/heights.
-    keymap = []
-    previous_y = -1
-    for key in board["layouts"]["LAYOUT_split_3x5_3"]["layout"]:
-        properties = {"x": key["x"], "y": key["y"] - previous_y - 1}
-        for dimension in ("w", "h"):
-            if dimension in key:
-                properties[dimension] = key[dimension]
-        row, col = key["matrix"]
-        keymap.append([properties, f"{row},{col}"])
-        previous_y = key["y"]
+    # QMK's keyboard.json is simplified: it omits the thumb rotations/pivots.
+    # Keep the official VIA KLE geometry instead. Source and revision: README.md.
+    layouts = json.loads(
+        Path(__file__).with_name("via-physical-layout.json").read_text()
+    )
+    labels = [
+        item for row in layouts["keymap"] for item in row if isinstance(item, str)
+    ]
+    physical = board["layouts"]["LAYOUT_split_3x5_3"]["layout"]
+    expected = {f"{key['matrix'][0]},{key['matrix'][1]}" for key in physical}
+    if len(labels) != len(physical) or set(labels) != expected:
+        raise ValueError("VIA physical layout does not match the Span matrix")
     return {
         "name": "Span",
         "vendorId": board["usb"]["vid"],
@@ -186,32 +185,38 @@ def keyboard_definition(board):
             {"name": name, "title": title, "shortName": short}
             for name, title, short in CUSTOM_KEYS
         ],
-        "layouts": {"keymap": keymap},
+        "layouts": layouts,
     }
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--elf", required=True, type=Path)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--elf", type=Path)
+    source.add_argument(
+        "--definition-only",
+        action="store_true",
+        help="Write only the VIA definition; leave saved assignments untouched",
+    )
     parser.add_argument("--output", required=True, type=Path)
     args = parser.parse_args()
     board_path = Path(__file__).resolve().parents[2] / "keyboard.json"
     board = json.loads(board_path.read_text())
-    layers = read_matrix(args.elf)
-    vid = int(board["usb"]["vid"], 16)
-    pid = int(board["usb"]["pid"], 16)
-    layout = {
-        "name": "Span",
-        "vendorProductId": (vid << 16) | pid,
-        "macros": [""] * 16,
-        "layers": [[via_keycode(code) for code in layer] for layer in layers],
-        "encoders": [],
-    }
+    exports = [("span-selenium.definition.json", keyboard_definition(board))]
+    if args.elf is not None:
+        layers = read_matrix(args.elf)
+        vid = int(board["usb"]["vid"], 16)
+        pid = int(board["usb"]["pid"], 16)
+        layout = {
+            "name": "Span",
+            "vendorProductId": (vid << 16) | pid,
+            "macros": [""] * 16,
+            "layers": [[via_keycode(code) for code in layer] for layer in layers],
+            "encoders": [],
+        }
+        exports.insert(0, ("span-selenium.layout.json", layout))
     args.output.mkdir(parents=True, exist_ok=True)
-    for name, data in (
-        ("span-selenium.layout.json", layout),
-        ("span-selenium.definition.json", keyboard_definition(board)),
-    ):
+    for name, data in exports:
         path = args.output / name
         path.write_text(json.dumps(data, indent=2) + "\n")
         print(path)
