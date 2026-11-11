@@ -1,0 +1,7 @@
+{
+  "SE_SHIFT_CAPS": "KC_LSFT",
+  "SE_ALTGR": "KC_RALT",
+  "SE_TILDE": "ALGR(KC_2)",
+  "SE_CARET": "KC_LBRC",
+  "SE_GRAVE": "ALGR(KC_7)"
+}

@@ -221,6 +221,18 @@ what is pressed. `process_record_keymap` calls `qmk_solver_process_record`
 first; `actions.c` reports the code tri-layer rule (layers 5 + 6 → 7). It
 does not change key behavior, and VIA keeps working alongside it.
 
+`qmk_solver_custom.json` tells the tool what the Selenium custom keys do,
+since only their numbers are flashed: the sticky Shift/Caps Word and AltGr
+keys act as held Shift and AltGr, and the literal `~`, `^`, `` ` `` keys as
+the French keys that type them. Run it from the QMK checkout's root:
+
+```sh
+qmk-solver tui --host-layout french \
+  --info keyboards/holykeebs/spankbd/keyboard.json \
+  --keymap-c keyboards/holykeebs/spankbd/keymaps/selenium/keymap.c \
+  --custom keyboards/holykeebs/spankbd/keymaps/selenium/qmk_solver_custom.json
+```
+
 ## Fresh checkout on another Linux/WSL machine
 
 Install the [QMK build prerequisites](https://docs.qmk.fm/newbs_getting_started),
