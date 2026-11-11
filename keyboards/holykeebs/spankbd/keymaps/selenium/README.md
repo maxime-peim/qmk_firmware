@@ -214,12 +214,14 @@ switching and extra swipe/zoom gestures are not enabled.
 
 ## qmk-solver practice reports
 
-`qmk_solver.c` (from the qmk-solver project) reports every key event over
-VIA's raw HID interface and answers keymap/tri-layer requests, so the
-`qmk-solver` practice tool can show the ways to type a shortcut and follow
-what is pressed. `process_record_keymap` calls `qmk_solver_process_record`
-first; `actions.c` reports the code tri-layer rule (layers 5 + 6 → 7). It
-does not change key behavior, and VIA keeps working alongside it.
+`qmk_solver.c` (from the qmk-solver project) reports every key event and
+every change of layers or modifiers over VIA's raw HID interface, and
+answers keymap/tri-layer requests, so the `qmk-solver` practice tool can
+show the ways to type a shortcut and follow what is pressed. It defines
+`pre_process_record_user` and `post_process_record_user`;
+`process_record_keymap` calls `qmk_solver_process_record` first, and
+`actions.c` reports the code tri-layer rule (layers 5 + 6 → 7). It does not
+change key behavior, and VIA keeps working alongside it.
 
 `qmk_solver_custom.json` tells the tool what the Selenium custom keys do,
 since only their numbers are flashed: the sticky Shift/Caps Word and AltGr

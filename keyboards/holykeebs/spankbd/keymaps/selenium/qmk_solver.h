@@ -11,7 +11,8 @@
 // gives keymaps, e.g. process_record_keymap) for every event.
 void qmk_solver_process_record(uint16_t keycode, keyrecord_t *record);
 
-// Define this to report a tri-layer rule applied in code, e.g. by
-// update_tri_layer_state() in layer_state_set_user, which the host cannot
-// read from the keymap: set lower, upper and adjust and return true.
+// Implement this if the keymap applies a tri-layer rule in code, e.g. with
+// update_tri_layer_state() in layer_state_set_user: the host can't read it
+// from the keymap. Set lower, upper and adjust, and return true.
+// qmk_solver.c has a weak default that reports none.
 bool qmk_solver_code_tri_layer(uint8_t layers[3]);
