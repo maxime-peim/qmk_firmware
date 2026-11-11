@@ -123,5 +123,14 @@ int main(void) {
         assert(process_record_keymap(key, &down));
         assert(process_record_keymap(key, &up));
     }
-    puts("PASS: matrix, AZERTY, i3 workspaces, layer access, tap/hold policy, sticky modifiers, dead symbols, Caps Word, Holykeebs passthrough");
+    // Every event reaches qmk-solver, including those the keymap consumes.
+    solver_reports = 0;
+    event(SE_SHIFT_CAPS, true);
+    event(SE_SHIFT_CAPS, false);
+    assert(solver_reports == 2);
+    uint8_t tri[3];
+    assert(qmk_solver_code_tri_layer(tri));
+    assert(tri[0] == SE_NUM_ROW && tri[1] == SE_FN_MEDIA && tri[2] == SE_SETTINGS);
+
+    puts("PASS: matrix, AZERTY, i3 workspaces, layer access, tap/hold policy, sticky modifiers, dead symbols, Caps Word, Holykeebs passthrough, qmk-solver hooks");
 }

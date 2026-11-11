@@ -9,3 +9,7 @@ CONSOLE ?= yes
 VIA_ENABLE = yes
 CAPS_WORD_ENABLE = yes
 SRC += tap_hold.c actions.c
+
+# qmk-solver practice tool: key event reports and keymap dump over raw HID
+# (which VIA already enables).
+SRC += qmk_solver.c

@@ -66,6 +66,12 @@ static void caps_word_toggle(void) { caps = !caps; }
 static void layer_move(uint8_t layer) { layers = 1U << layer; }
 static void tap_code16(uint16_t value) { sent[sent_count++] = value; }
 static void tap_code(uint8_t value) { tap_code16(value); }
+static unsigned solver_reports;
+void qmk_solver_process_record(uint16_t keycode, keyrecord_t *record) {
+    (void)keycode;
+    (void)record;
+    solver_reports++;
+}
 static layer_state_t update_tri_layer_state(layer_state_t state, uint8_t a, uint8_t b, uint8_t c) {
     if ((state & (1U << a)) && (state & (1U << b))) return state | (1U << c);
     return state & ~(1U << c);

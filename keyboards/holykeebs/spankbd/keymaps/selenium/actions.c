@@ -2,6 +2,7 @@
 // Selenium's sticky Shift/Caps Word and base-layer AltGr actions, adapted to
 // Holykeebs' process_record_keymap hook. See README.md for upstream provenance.
 #include "selenium.h"
+#include "qmk_solver.h"
 
 static bool shift_held;
 static bool shift_used;
@@ -19,6 +20,8 @@ static void literal_dead_key(uint16_t keycode) {
 
 // This is called by Holykeebs' process_record_user; do not replace that hook.
 bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
+    qmk_solver_process_record(keycode, record);
+
     if (record->event.pressed) {
         if (shift_held && keycode != SE_SHIFT_CAPS) {
             shift_used = true;
@@ -84,6 +87,15 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     // Both inner 2u thumbs: Esc/Fn + Enter/Numbers -> settings/workspaces.
     return update_tri_layer_state(state, SE_NUM_ROW, SE_FN_MEDIA, SE_SETTINGS);
+}
+
+// Tells qmk-solver about the tri-layer rule above, which it can't read from
+// the keymap.
+bool qmk_solver_code_tri_layer(uint8_t layers[3]) {
+    layers[0] = SE_NUM_ROW;
+    layers[1] = SE_FN_MEDIA;
+    layers[2] = SE_SETTINGS;
+    return true;
 }
 
 bool caps_word_press_user(uint16_t keycode) {
