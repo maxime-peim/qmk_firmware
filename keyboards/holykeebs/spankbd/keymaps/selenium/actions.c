@@ -85,7 +85,7 @@ bool process_record_keymap(uint16_t keycode, keyrecord_t *record) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    // Both inner 2u thumbs: Esc/Fn + Enter/Numbers -> settings/workspaces.
+    // Both inner 2u thumbs: Space/Fn + Backspace/Numbers -> settings/workspaces.
     return update_tri_layer_state(state, SE_NUM_ROW, SE_FN_MEDIA, SE_SETTINGS);
 }
 

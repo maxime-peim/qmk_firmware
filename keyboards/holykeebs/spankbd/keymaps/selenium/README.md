@@ -104,18 +104,20 @@ matching i3's usual `Mod4`. Shift is a thumb action, not a letter hold.
 Read the following **left to right physically**, from outer left to outer right:
 
 ```text
-Left outer 1u:  sticky/held Shift; second tap toggles Caps Word
-Left middle:   tap Backspace / hold Vim navigation
-Left inner 2u: tap Escape    / hold Function/Media
+Left outer 1u:    sticky/held Shift; second tap toggles Caps Word
+Left middle 1.5u: tap Escape    / hold Vim navigation
+Left inner 2u:    tap Space     / hold Function/Media
 
-Right inner 2u: tap Enter   / hold Numbers
-Right middle:   tap Space   / hold Vim navigation
-Right outer 1u: tap Symbols for the next key / hold for continuous Symbols
+Right inner 2u:    tap Backspace / hold Numbers
+Right middle 1.5u: tap Enter     / hold Vim navigation
+Right outer 1u:    tap Symbols for the next key / hold for continuous Symbols
 ```
 
-These are Selenium's default thumb roles. The right-middle Space layer-tap
-deliberately prefers typing Space; hold it for 300 ms to enter navigation, or
-use left-middle Backspace/Nav for the faster hold-preferred navigation key.
+Selenium's thumb roles, with the taps rearranged: Space on the left, and
+Escape/Enter on the 1.5u keys. The holds stay where Selenium puts them, so
+the settings tri-layer is still both inner 2u thumbs. The Space layer-tap
+deliberately prefers typing Space: hold it for 300 ms to enter Function/Media.
+The other thumb layer-taps switch layers as soon as another key is pressed.
 
 ## Layers and access
 
@@ -124,10 +126,10 @@ use left-middle Backspace/Nav for the faster hold-preferred navigation key.
 | 0 | AZERTY and home-row modifiers | Default |
 | 1 | Persistent navigation/numpad | Settings layer → physical X; exit at physical Y |
 | 2 | Selenium programming symbols | Right outer thumb |
-| 3 | Vim navigation and editing | Hold left-middle or right-middle thumb |
+| 3 | Vim navigation and editing | Hold left-middle Esc or right-middle Enter thumb |
 | 4 | Inverted-T navigation/numpad | Settings layer → hold physical W |
-| 5 | Numbers | Hold right inner thumb; also left outer thumb while on Symbols |
-| 6 | Function keys and media | Hold left inner thumb; also available from navigation |
+| 5 | Numbers | Hold right inner Backspace thumb; also left outer thumb while on Symbols |
+| 6 | Function keys and media | Hold left inner Space thumb; also available from navigation |
 | 7 | Workspaces, touchpad settings, recovery | Hold **both inner 2u thumbs** |
 
 ### Navigation
@@ -169,10 +171,10 @@ workspace key. Use the Shift on the opposite hand from the workspace key.
 
 ### tmux
 
-- Alt+arrow: **hold F (Alt) first**, then hold left-middle Backspace/Nav,
+- Alt+arrow: **hold F (Alt) first**, then hold left-middle Esc/Nav,
   then press H/J/K/L. Keep Alt held throughout. Navigation changes F to Tab,
   so pressing navigation first and then F is not the same chord.
-- Ctrl+Space → Z: hold **D** for Ctrl, tap the **right-middle Space** thumb,
+- Ctrl+Space → Z: hold **D** for Ctrl, tap the **left inner Space** thumb,
   release both, then tap **Z**. Release navigation before this sequence.
 - E/R on navigation send Alt+Left/Alt+Right directly. Unlike upstream's
   optional window-cycle morph, these remain ordinary Alt+arrows on Linux.
@@ -198,8 +200,8 @@ Hold both inner 2u thumbs to activate layer 7:
 
 For example, to return the right controller to bootloader mode: hold both inner
 thumbs and press the physical bottom-right `!` key. The function layer also
-retains Selenium's bootloader key; Fn+Space deliberately remains Space rather
-than unexpectedly rebooting. Physical reset/BOOT buttons remain
+retains Selenium's bootloader key, on the left-middle thumb; the right-middle
+thumb stays Enter there. Physical reset/BOOT buttons remain
 available independently; Holykeebs' reset double-tap support is unchanged.
 
 Read diagnostics with:
@@ -306,7 +308,11 @@ Span-specific adaptations:
   `keyboard.json` does not include the thumb rotations and is not used for
   display geometry. Matrix coordinates and assignments are unchanged.
 - Literal French dead-key completion and a French-aware Caps Word handler.
-- Fn+Space remains Space instead of using the upstream reboot assignment.
+- The thumb taps are rearranged: Space on the left inner 2u thumb, Backspace
+  on the right one, Escape and Enter on the 1.5u thumbs. The persistent
+  numpad, symbols, numpad-navigation and function layers follow the same
+  arrangement (Space on the left inner thumb, Enter on the right middle one).
+- Fn + right-middle thumb sends Enter instead of the upstream reboot assignment.
 - Navigation E/R use simple Linux Alt+arrows, not the upstream window-cycle
   mod-morph. This does not reproduce every ZMK-only Selenium convenience.
 

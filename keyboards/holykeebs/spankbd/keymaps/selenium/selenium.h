@@ -37,8 +37,10 @@ _Static_assert((uint16_t)SE_SHIFT_CAPS <= (uint16_t)QK_KB_MAX, "Selenium custom 
 #define SE_K_CTL LCTL_T(FR_K)
 #define SE_L_GUI LGUI_T(FR_L)
 
-#define SE_BSP_NAV LT(SE_VIM_NAV, KC_BSPC)
-#define SE_SPC_NAV LT(SE_VIM_NAV, KC_SPC)
-#define SE_ESC_FN LT(SE_FN_MEDIA, KC_ESC)
-#define SE_ENT_NUM LT(SE_NUM_ROW, KC_ENT)
+// Thumbs: the 1.5u keys hold navigation, the inner 2u keys hold the two
+// tri-layer layers.
+#define SE_ESC_NAV LT(SE_VIM_NAV, KC_ESC)
+#define SE_ENT_NAV LT(SE_VIM_NAV, KC_ENT)
+#define SE_SPC_FN LT(SE_FN_MEDIA, KC_SPC)
+#define SE_BSP_NUM LT(SE_NUM_ROW, KC_BSPC)
 #define SE_SYM OSL(SE_SYMBOLS)

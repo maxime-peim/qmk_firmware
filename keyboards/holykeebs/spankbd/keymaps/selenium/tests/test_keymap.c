@@ -50,20 +50,20 @@ int main(void) {
     assert(keymaps[SE_SETTINGS][6][1] == KC_RSFT);
 
     // The opposite inner thumb remains available in either activation order.
-    assert(resolved((1U << SE_BASE) | (1U << SE_FN_MEDIA), 7, 4) == SE_ENT_NUM);
-    assert(resolved((1U << SE_BASE) | (1U << SE_NUM_ROW), 3, 4) == SE_ESC_FN);
+    assert(resolved((1U << SE_BASE) | (1U << SE_FN_MEDIA), 7, 4) == SE_BSP_NUM);
+    assert(resolved((1U << SE_BASE) | (1U << SE_NUM_ROW), 3, 4) == SE_SPC_FN);
     layer_state_t both = (1U << SE_BASE) | (1U << SE_FN_MEDIA) | (1U << SE_NUM_ROW);
     assert(layer_state_set_user(both) & (1U << SE_SETTINGS));
     assert(!(layer_state_set_user(both & ~(1U << SE_NUM_ROW)) & (1U << SE_SETTINGS)));
     assert(!(layer_state_set_user(both & ~(1U << SE_FN_MEDIA)) & (1U << SE_SETTINGS)));
 
-    const uint16_t tap_keys[] = {SE_S_GUI, SE_D_CTL, SE_F_ALT, SE_J_ALT, SE_K_CTL, SE_L_GUI, SE_SPC_NAV, LALT_T(KC_MPLY), LCTL_T(KC_MUTE)};
+    const uint16_t tap_keys[] = {SE_S_GUI, SE_D_CTL, SE_F_ALT, SE_J_ALT, SE_K_CTL, SE_L_GUI, SE_SPC_FN, LALT_T(KC_MPLY), LCTL_T(KC_MUTE)};
     for (unsigned i = 0; i < sizeof(tap_keys) / sizeof(tap_keys[0]); ++i) {
         assert(get_tapping_term(tap_keys[i], NULL) == 300);
         assert(!get_hold_on_other_key_press(tap_keys[i], NULL));
         assert(get_quick_tap_term(tap_keys[i], NULL) == 200);
     }
-    const uint16_t hold_keys[] = {SE_ESC_FN, SE_ENT_NUM, SE_BSP_NAV, LT(SE_FN_MEDIA, KC_DEL)};
+    const uint16_t hold_keys[] = {SE_ESC_NAV, SE_ENT_NAV, SE_BSP_NUM, LT(SE_FN_MEDIA, KC_DEL)};
     for (unsigned i = 0; i < sizeof(hold_keys) / sizeof(hold_keys[0]); ++i) {
         assert(get_tapping_term(hold_keys[i], NULL) == 150);
         assert(get_hold_on_other_key_press(hold_keys[i], NULL));
